@@ -1,9 +1,14 @@
 """
 Main API router — aggregates all endpoint routers under /api prefix.
+
+Todos os endpoints /api/* exigem um Bearer JWT válido emitido pelo CRM_MG
+(ver app/auth.py). O health-check fica em app/main.py, fora deste router, e
+continua público.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.auth import get_crm_user
 from app.api.endpoints import (
     confidential,
     expectations,
@@ -15,7 +20,7 @@ from app.api.endpoints import (
     benefits,
 )
 
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/api", dependencies=[Depends(get_crm_user)])
 
 router.include_router(confidential.router)
 router.include_router(overview.router)

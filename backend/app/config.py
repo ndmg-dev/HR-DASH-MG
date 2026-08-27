@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     cors_origins: list[str] = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        # CRM_MG — o Dash RH agora roda embarcado como sistema nativo do CRM;
+        # o frontend do CRM chama esta API a partir de outra origem.
+        "https://crmmg.mendoncagalvao.com.br",
     ]
 
     # ── Salary bands (BRL) ─────────────────────────────────────────────
@@ -43,7 +46,15 @@ class Settings(BaseSettings):
     # Especialista: everything above senior_max
 
     # ── Security ───────────────────────────────────────────────────────
-    confidential_password: str = "senha_segura_123"
+    confidential_password: str = "senha_segura_123"  # legado, não mais usado (ver auth.py)
+
+    # SSO com o CRM_MG. `crm_jwt_secret` (env HR_CRM_JWT_SECRET) DEVE ser igual
+    # ao JWT_SECRET do backend-fastapi do CRM. Sem ele, toda chamada /api/* é
+    # recusada com 401. `confidential_allowlist`: e-mails (separados por vírgula)
+    # autorizados na Área Restrita; vazio = qualquer usuário autenticado pelo CRM.
+    crm_jwt_secret: str = ""
+    confidential_allowlist: str = ""
+    allowed_email_domains: str = "mendoncagalvao.com.br,nucleodigital.cloud"
 
     # ── Tenure bands (years) ──────────────────────────────────────────
     tenure_band_newcomer_max: float = 1.0
